@@ -1,32 +1,40 @@
 ﻿@using OrderManager.Models
 
-<div id="example">
-    <div class="demo-section auto">
-        @(Html.Kendo()
-            .DataSource<OrderViewModel>()
-            .Name("dataSource1")
-            .Ajax(t=>t.Read(read => read.Action("Orders_Read", "Order")).PageSize(20))
-        )
-        @(Html.Kendo().Grid<OrderViewModel>()
-            .Name("grid")
-            .Columns(columns => {
-                columns.Bound(p => p.OrderID).Width(120);
-                columns.Bound(p => p.Freight).Width(120);
-                columns.Bound(p => p.OrderDate).Format("{0:MM/dd/yyyy}").Width(140);
-                columns.Bound(p => p.ShipName);
-                columns.Bound(p => p.ShipCity).Width(150);
-            })
-            .Sortable()
-            .Scrollable()
-            .Filterable()
-            .DataSource("dataSource1")
-        )
-        @(Html.Kendo().Pager()
-            .Name("pager")
-            .ButtonCount(5)
-            .DataSource("dataSource1")
-            .PageSizes(true)
-            .Refresh(true)
-        )
-    </div>
-</div>
+@(Html.Kendo().Grid<OrderViewModel>()
+    .Name("grid")
+    .Columns(columns => {
+        columns.Bound(p => p.OrderID).Width(120);
+        columns.Bound(p => p.Freight).Width(120);
+        columns.Bound(p => p.OrderDate).Format("{0:MM/dd/yyyy}").Width(140);
+        columns.Bound(p => p.ShipName);
+        columns.Bound(p => p.ShipCity).Width(150);
+    })
+    .Sortable()
+    .Scrollable()
+    .Filterable()
+    .Pageable(p=>p
+        .ButtonCount(5)
+        .PageSizes(true)
+        .Refresh(true)
+    )
+    .ToolBar(toolbar => 
+        {
+            toolbar.Excel();
+            toolbar.Pdf();
+            toolbar.Search();
+        }
+    )
+    // Configure what fields and operators will be used by the search panel to filter the data
+    .Search(s => {
+            s.Field(o => o.OrderID, "eq");
+            s.Field(o => o.ShipName, "contains");
+            s.Field(o => o.ShipCity, "contains");
+    })
+    .Pdf(pdf=>pdf.AllPages(true))
+    .Excel(excel=>excel.AllPages(true))
+    .DataSource(ds=>ds
+        .Ajax()
+        .Read(r=>r.Action("Orders_Read", "Order"))
+        .PageSize(20)
+    )
+)
