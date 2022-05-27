@@ -1,7 +1,4 @@
 ﻿@using OrderManager.Models
-
-<div id="example">
-    <div class="demo-section auto">
         @(Html.Kendo()
             .DataSource<OrderViewModel>()
             .Name("dataSource1")
@@ -20,6 +17,13 @@
             .Scrollable()
             .Filterable()
             .DataSource("dataSource1")
+            .ToolBar(toolbar => {
+                toolbar.Excel();
+                toolbar.Pdf();
+                toolbar.Search();
+            })
+            .Pdf(pdf=>pdf.ProxyURL(Url.Action("Excel_Export_Save", "Grid")))
+            .Excel(excel=>excel.ProxyURL(Url.Action("Excel_Export_Save", "Grid")))
         )
         @(Html.Kendo().Pager()
             .Name("pager")
@@ -28,5 +32,3 @@
             .PageSizes(true)
             .Refresh(true)
         )
-    </div>
-</div>
